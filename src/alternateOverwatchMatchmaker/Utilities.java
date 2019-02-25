@@ -21,30 +21,30 @@ public class Utilities {
 		return Float.valueOf(floatString.substring(0, floatString.length() - 1));
 	}
 	
-	public static double[] parseForStatsById(int heroId, String textToParse) {
+	public static Stats parseForStatsById(int heroId, String textToParse) {
 		String[] timeStrings;
-		double seconds = 0;
-		double[] retArray = new double[5];
+		int seconds = 0;
 		String[] lineArray = textToParse.split("\n");
+		Stats retStats = new Stats();
 		
 		//Elims
-		retArray[0] = Double.valueOf(lineArray[(heroId * 8) + 2]);
+		retStats.setEliminations(Double.valueOf(lineArray[(heroId * 7) + 2]));
 		
 		//Objective Kills
-		retArray[1] = Double.valueOf(lineArray[(heroId * 8) + 3]);
+		retStats.setObjectiveElims(Double.valueOf(lineArray[(heroId * 7) + 3]));
 		
 		//Objective Time (in seconds)
-		timeStrings = lineArray[(heroId * 8) + 4].split(":");
-		seconds += Double.valueOf(timeStrings[0]) * 60;
-		seconds += Double.valueOf(timeStrings[1]);
-		retArray[2] = seconds;
+		timeStrings = lineArray[(heroId * 7) + 4].split(":");
+		seconds += Integer.valueOf(timeStrings[0]) * 60;
+		seconds += Integer.valueOf(timeStrings[1]);
+		retStats.setObjectiveTime(seconds);
 		
 		//Damage
-		retArray[3] = Double.valueOf(lineArray[(heroId * 8) + 5].replace(",", ""));
+		retStats.setHeroDamage(Integer.valueOf(lineArray[(heroId * 7) + 5].replace(",", "")));
 
-		
-		
-		
-		return retArray;
+		//Healing
+		retStats.setHealingDone(Integer.valueOf(lineArray[(heroId * 7) + 6].replace(",", "")));
+
+		return retStats;
 	}
 }

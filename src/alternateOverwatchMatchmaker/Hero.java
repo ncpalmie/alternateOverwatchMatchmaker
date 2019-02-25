@@ -15,8 +15,6 @@ public class Hero {
 	private final int shield;
 	private final int armor;
 	private final float movementSpeed;
-	private final float[] avgDPSbyRank;
-	private final float[] avgHPSbyRank;
 	private final float[] pickRateByRank;
 	private final Stats[] avgStats;
 	private final List<Hero> counters;
@@ -32,8 +30,6 @@ public class Hero {
 		this.shield = shield;
 		this.armor = armor;
 		this.movementSpeed = movementSpeed;
-		this.avgDPSbyRank = WebScraper.getDPSArrayFor(heroId);
-		this.avgHPSbyRank = WebScraper.getHPSArrayFor(heroId);
 		this.pickRateByRank = WebScraper.getPickRateArrayFor(heroId);
 		this.avgStats = WebScraper.getAvgStatsFor(heroId);
 		this.counters = new ArrayList<Hero>();
@@ -148,6 +144,14 @@ public class Hero {
 		retString += "    Diamond: " + this.pickRateByRank[4] + "\n";
 		retString += "    Master: " + this.pickRateByRank[5] + "\n";
 		retString += "    Grandmaster: " + this.pickRateByRank[6] + "\n";
+		retString += "Hero Average Stats (by rank):\n";
+		retString += "    Bronze: " + this.avgStats[0].toString() + "\n";
+		retString += "    Silver: " + this.avgStats[1].toString() + "\n";
+		retString += "    Gold: " + this.avgStats[2].toString() + "\n";
+		retString += "    Platinum: " + this.avgStats[3].toString() + "\n";
+		retString += "    Diamond: " + this.avgStats[4].toString() + "\n";
+		retString += "    Master: " + this.avgStats[5].toString() + "\n";
+		retString += "    Grandmaster: " + this.avgStats[6].toString() + "\n";
 		retString += "Counters: ";
 		for (Hero hero : this.counters) {
 			retString += hero.name + " ";

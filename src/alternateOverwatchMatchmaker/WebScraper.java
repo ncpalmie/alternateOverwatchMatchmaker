@@ -13,9 +13,9 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class WebScraper {
 	
-	private static double pageLoadWaitTime = 0.7;
+	private static double pageLoadWaitTime = 0.7; //Temporary solution, will eventually use smarter way to ensure page loaded
 	public static String[] pickRateDataTable = null;
-	private static WebElement[] primaryStatsTable = null;
+	private static String[] primaryStatsTable = null;
 	private static WebDriver driver = setupDriver();
 	private static String baseUrl = "https://overbuff.com/heroes";
 	public static final String XPATH_TO_ALPHA_SORT = "/html/body/div[1]/div[3]/div/div/div/div[2]/table/thead/tr/th[2]/a";
@@ -25,6 +25,8 @@ public class WebScraper {
 	public static final String XPATH_TO_HEROTYPE = "/html/body/div[1]/div[3]/div/div/div/div[1]/div/div[4]/div[1]";
 	public static final String XPATH_TO_RANKS = "/html/body/div[1]/div[3]/div/div/div/div[1]/div/div[5]/div";
 	public static final String XPATH_TO_TABLE = "/html/body/div[1]/div[3]/div/div/div/div[2]/table/tbody";
+	public static final String XPATH_TO_PRIMARY = "/html/body/div[1]/div[3]/div/div/div/div[2]/div/div[2]";
+	public static final String XPATH_TO_OVERVIEW = "/html/body/div[1]/div[3]/div/div/div/div[2]/div/div[1]";
 	public static final List<String> XPATHS_TO_CLICK = Arrays.asList(XPATH_TO_ALPHA_SORT, XPATH_TO_TIME_FRAME,
 			XPATH_TO_PLATFORM, XPATH_TO_GAMEMODE, XPATH_TO_HEROTYPE);
 	
@@ -34,18 +36,7 @@ public class WebScraper {
 	public static void setupPage() {
 		driver.get(baseUrl);
 	}
-	
-	public static float[] getDPSArrayFor(int heroId) {
-		float[] retArray = new float[7];
-		return retArray;
-	}
-	
-	
-	public static float[] getHPSArrayFor(int heroId) {
-		float[] retArray = new float[7];
-		return retArray;
-	}
-	
+
 	public static float[] getPickRateArrayFor(int heroId) {
 		int currTable = 0;
 		float[] retArray = new float[7];
@@ -53,6 +44,7 @@ public class WebScraper {
 		if (pickRateDataTable == null) {
 			int currRank = 2; //Initial rank starts at div[2] and final is at div[8]
 			pickRateDataTable = new String[7];
+			findAndClickByXPath(XPATH_TO_OVERVIEW);
 			while (currRank <= 8) {
 				findAndClickByXPath(XPATH_TO_RANKS + "[" + currRank + "]");
 				pickRateDataTable[currRank - 2] = driver.findElement(By.xpath(XPATH_TO_TABLE)).getText();
@@ -67,14 +59,33 @@ public class WebScraper {
 		
 		return retArray;
 	}
-	
+
+	//Will eventually be removed and implemented with above function using lambdas
 	public static Stats[] getAvgStatsFor(int heroId) {
+		int currTable = 0;
 		Stats[] retArray = new Stats[7];
+
+		if (primaryStatsTable == null) {
+			int currRank = 2; //Initial rank starts at div[2] and final is at div[8]
+			primaryStatsTable = new String[7];
+			findAndClickByXPath(XPATH_TO_PRIMARY);
+			while (currRank <= 8) {
+				findAndClickByXPath(XPATH_TO_RANKS + "[" + currRank + "]");
+				primaryStatsTable[currRank - 2] = driver.findElement(By.xpath(XPATH_TO_TABLE)).getText();
+				currRank++;
+			}
+		}
+
+		while (currTable <= 6) {
+			retArray[currTable] = Utilities.parseForStatsById(heroId, primaryStatsTable[currTable]);
+			currTable++;
+		}
+
 		return retArray;
 	}
 
 	private static WebDriver setupDriver() {
-		System.setProperty("webdriver.chrome.driver", "C:\\Users\\palmi\\IdeaProjects\\altOverwatchMatchmaker\\chromedriver.exe");
+		System.setProperty("webdriver.chrome.driver", "C:\\Users\\palmi\\IdeaProjects\\alternateOverwatchMatchmaker\\chromedriver.exe");
 		ChromeOptions chromeOpts = new ChromeOptions();
 		if (!Main.debug) {
 	    	chromeOpts.addArguments("--headless");
