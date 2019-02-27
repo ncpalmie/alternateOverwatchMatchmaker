@@ -19,7 +19,7 @@ public class Hero {
 	private final Stats[] avgStats;
 	private final List<Hero> counters;
 	private static final Map<String, Integer> NAME_TO_ID = setNameToIDMap();
-	private static final List<Hero> heroList = setupHeroList();
+	private static List<Hero> heroList = setupHeroList();
 	
 	public Hero(String name, String heroType, int heroId, int health, int shield, 
 			int armor, float movementSpeed) {
@@ -125,8 +125,48 @@ public class Hero {
 			
 		}
 	}
-	
-	@Override
+
+	public String getName() {
+	    return name;
+    }
+
+    public String getHeroType() {
+	    return heroType;
+    }
+
+    public int getHeroId() {
+	    return heroId;
+    }
+
+    public int getHealth() {
+	    return health;
+    }
+
+    public int getShield() {
+	    return shield;
+    }
+
+    public int getArmor() {
+	    return armor;
+    }
+
+    public float getMovementSpeed() {
+	    return movementSpeed;
+    }
+
+    public float[] getPickRateByRank() {
+        return pickRateByRank;
+    }
+
+    public List<Hero> getCounters() {
+        return counters;
+    }
+
+    public Stats[] getAvgStats() {
+        return avgStats;
+    }
+
+    @Override
 	public String toString() {
 		String retString = "";
 		retString += this.name + "\n";

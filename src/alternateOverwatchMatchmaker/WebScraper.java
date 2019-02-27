@@ -13,21 +13,21 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class WebScraper {
 	
-	private static double pageLoadWaitTime = 0.7; //Temporary solution, will eventually use smarter way to ensure page loaded
-	public static String[] pickRateDataTable = null;
-	private static String[] primaryStatsTable = null;
+	private static double pageLoadWaitTime = 0.95; //Temporary solution, will eventually use smarter way to ensure page loaded
+	private static String[] pickRateDataTable = null;
+	public static String[] primaryStatsTable = null;
 	private static WebDriver driver = setupDriver();
 	private static String baseUrl = "https://overbuff.com/heroes";
-	public static final String XPATH_TO_ALPHA_SORT = "/html/body/div[1]/div[3]/div/div/div/div[2]/table/thead/tr/th[2]/a";
-	public static final String XPATH_TO_TIME_FRAME = "/html/body/div[1]/div[3]/div/div/div/div[1]/div/div[1]/div[4]";
-	public static final String XPATH_TO_PLATFORM = "/html/body/div[1]/div[3]/div/div/div/div[1]/div/div[2]/div[1]";
-	public static final String XPATH_TO_GAMEMODE = "/html/body/div[1]/div[3]/div/div/div/div[1]/div/div[3]/div[2]";
-	public static final String XPATH_TO_HEROTYPE = "/html/body/div[1]/div[3]/div/div/div/div[1]/div/div[4]/div[1]";
-	public static final String XPATH_TO_RANKS = "/html/body/div[1]/div[3]/div/div/div/div[1]/div/div[5]/div";
-	public static final String XPATH_TO_TABLE = "/html/body/div[1]/div[3]/div/div/div/div[2]/table/tbody";
-	public static final String XPATH_TO_PRIMARY = "/html/body/div[1]/div[3]/div/div/div/div[2]/div/div[2]";
-	public static final String XPATH_TO_OVERVIEW = "/html/body/div[1]/div[3]/div/div/div/div[2]/div/div[1]";
-	public static final List<String> XPATHS_TO_CLICK = Arrays.asList(XPATH_TO_ALPHA_SORT, XPATH_TO_TIME_FRAME,
+	private static final String XPATH_TO_ALPHA_SORT = "/html/body/div[1]/div[3]/div/div/div/div[2]/table/thead/tr/th[2]/a";
+	private static final String XPATH_TO_TIME_FRAME = "/html/body/div[1]/div[3]/div/div/div/div[1]/div/div[1]/div[4]";
+	private static final String XPATH_TO_PLATFORM = "/html/body/div[1]/div[3]/div/div/div/div[1]/div/div[2]/div[1]";
+	private static final String XPATH_TO_GAMEMODE = "/html/body/div[1]/div[3]/div/div/div/div[1]/div/div[3]/div[2]";
+	private static final String XPATH_TO_HEROTYPE = "/html/body/div[1]/div[3]/div/div/div/div[1]/div/div[4]/div[1]";
+	private static final String XPATH_TO_RANKS = "/html/body/div[1]/div[3]/div/div/div/div[1]/div/div[5]/div";
+	private static final String XPATH_TO_TABLE = "/html/body/div[1]/div[3]/div/div/div/div[2]/table/tbody";
+	private static final String XPATH_TO_PRIMARY = "/html/body/div[1]/div[3]/div/div/div/div[2]/div/div[2]";
+	private static final String XPATH_TO_OVERVIEW = "/html/body/div[1]/div[3]/div/div/div/div[2]/div/div[1]";
+	private static final List<String> XPATHS_TO_CLICK = Arrays.asList(XPATH_TO_ALPHA_SORT, XPATH_TO_TIME_FRAME,
 			XPATH_TO_PLATFORM, XPATH_TO_GAMEMODE, XPATH_TO_HEROTYPE);
 	
 	public WebScraper() {
@@ -35,6 +35,29 @@ public class WebScraper {
 	
 	public static void setupPage() {
 		driver.get(baseUrl);
+		WebScraper.findAndClickByXPath(WebScraper.XPATHS_TO_CLICK);
+		//Need to click alpha sort twice to sort by alphabetically ascending
+		WebScraper.findAndClickByXPath(WebScraper.XPATH_TO_ALPHA_SORT);
+	}
+
+	private static WebDriver setupDriver() {
+		System.setProperty("webdriver.chrome.driver", "C:\\Users\\palmi\\IdeaProjects\\alternateOverwatchMatchmaker\\chromedriver.exe");
+		ChromeOptions chromeOpts = new ChromeOptions();
+		if (!Main.debug) {
+			chromeOpts.addArguments("--headless");
+		}
+		WebDriver retDriver = new ChromeDriver(chromeOpts);
+
+		return retDriver;
+	}
+
+	public static boolean closeDriver() {
+		driver.quit();
+		if (((RemoteWebDriver) driver).getSessionId() == null) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public static float[] getPickRateArrayFor(int heroId) {
@@ -84,25 +107,6 @@ public class WebScraper {
 		return retArray;
 	}
 
-	private static WebDriver setupDriver() {
-		System.setProperty("webdriver.chrome.driver", "C:\\Users\\palmi\\IdeaProjects\\alternateOverwatchMatchmaker\\chromedriver.exe");
-		ChromeOptions chromeOpts = new ChromeOptions();
-		if (!Main.debug) {
-	    	chromeOpts.addArguments("--headless");
-		}
-	    WebDriver retDriver = new ChromeDriver(chromeOpts);
-	    
-	    return retDriver;
-	}
-	
-	public static boolean closeDriver() {
-		driver.quit();
-		if (((RemoteWebDriver) driver).getSessionId() == null) {
-			return true;
-		} else {
-			return false;
-		}
-	}
 	
 	public static boolean findAndClickByXPath(String xpath) {
 		int clicks = 0;
