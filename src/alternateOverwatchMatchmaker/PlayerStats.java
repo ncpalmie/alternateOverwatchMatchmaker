@@ -1,7 +1,10 @@
 package alternateOverwatchMatchmaker;
 
+import java.util.Random;
+
 public class PlayerStats extends Stats {
 
+    private static Random randomGenerator = new Random();
     private float winRate;
     private int endorsementLevel;
     private int totalWins;
@@ -31,6 +34,29 @@ public class PlayerStats extends Stats {
         this.currSeasonRanking = 0;
         this.numEarlyLeaves = 0;
         this.currStreak = 0;
+    }
+
+    /**
+     * Generates a set of player skill values randomly
+     * @param skill value from 1-100 to determine range of stats generated
+     * @return
+     */
+    public static PlayerStats generateRandomStats(int skill) {
+        PlayerStats retStats = new PlayerStats();
+        if (skill < 15) {
+            retStats.setEndorsementLevel(randomGenerator.nextInt(1) + 1);
+            retStats.setCurrSeasonRanking(randomGenerator.nextInt(1500));
+            retStats.setTotalWins(randomGenerator.nextInt(25));
+            retStats.setNumEarlyLeaves((int) (randomGenerator.nextInt(4) * Math.abs(randomGenerator.nextGaussian())));
+            retStats.setTotalLosses(randomGenerator.nextInt(40));
+            retStats.setCurrStreak(randomGenerator.nextInt(4));
+            retStats.setEliminations((randomGenerator.nextDouble() % 12.0) + 6.0);
+            retStats.setHealingDone(randomGenerator.nextInt(3000) + 5000);
+            retStats.setHeroDamage(randomGenerator.nextInt(4000) + 5000);
+            retStats.setObjectiveTime(randomGenerator.nextInt(45) + 80);
+            retStats.setObjectiveElims(randomGenerator.nextDouble() % 11.0);
+        }
+        return retStats;
     }
 
     public void setWinRate(float winRate) {
@@ -84,4 +110,6 @@ public class PlayerStats extends Stats {
     public int getTotalLosses() {
         return totalLosses;
     }
+
+    public float getWinRate() { return winRate; }
 }

@@ -14,10 +14,10 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 public class WebScraper {
 	
 	private static double pageLoadWaitTime = 0.95; //Temporary solution, will eventually use smarter way to ensure page loaded
-	private static String[] pickRateDataTable = null;
-	public static String[] primaryStatsTable = null;
+	private  String[] pickRateDataTable = null;
+	private String[] primaryStatsTable = null;
 	private static WebDriver driver = setupDriver();
-	private static String baseUrl = "https://overbuff.com/heroes";
+	private String baseUrl;
 	private static final String XPATH_TO_ALPHA_SORT = "/html/body/div[1]/div[3]/div/div/div/div[2]/table/thead/tr/th[2]/a";
 	private static final String XPATH_TO_TIME_FRAME = "/html/body/div[1]/div[3]/div/div/div/div[1]/div/div[1]/div[4]";
 	private static final String XPATH_TO_PLATFORM = "/html/body/div[1]/div[3]/div/div/div/div[1]/div/div[2]/div[1]";
@@ -30,14 +30,15 @@ public class WebScraper {
 	private static final List<String> XPATHS_TO_CLICK = Arrays.asList(XPATH_TO_ALPHA_SORT, XPATH_TO_TIME_FRAME,
 			XPATH_TO_PLATFORM, XPATH_TO_GAMEMODE, XPATH_TO_HEROTYPE);
 	
-	public WebScraper() {
+	public WebScraper(String baseUrl) {
+		this.baseUrl = baseUrl;
 	}
 	
-	public static void setupPage() {
+	public void setupPage() {
 		driver.get(baseUrl);
-		WebScraper.findAndClickByXPath(WebScraper.XPATHS_TO_CLICK);
+		findAndClickByXPath(WebScraper.XPATHS_TO_CLICK);
 		//Need to click alpha sort twice to sort by alphabetically ascending
-		WebScraper.findAndClickByXPath(WebScraper.XPATH_TO_ALPHA_SORT);
+		findAndClickByXPath(WebScraper.XPATH_TO_ALPHA_SORT);
 	}
 
 	private static WebDriver setupDriver() {
@@ -51,7 +52,7 @@ public class WebScraper {
 		return retDriver;
 	}
 
-	public static boolean closeDriver() {
+	public boolean closeDriver() {
 		driver.quit();
 		if (((RemoteWebDriver) driver).getSessionId() == null) {
 			return true;
@@ -60,7 +61,7 @@ public class WebScraper {
 		}
 	}
 
-	public static float[] getPickRateArrayFor(int heroId) {
+	public float[] getPickRateArrayFor(int heroId) {
 		int currTable = 0;
 		float[] retArray = new float[7];
 		
@@ -84,7 +85,7 @@ public class WebScraper {
 	}
 
 	//Will eventually be removed and implemented with above function using lambdas
-	public static Stats[] getAvgStatsFor(int heroId) {
+	public Stats[] getAvgStatsFor(int heroId) {
 		int currTable = 0;
 		Stats[] retArray = new Stats[7];
 
@@ -108,7 +109,7 @@ public class WebScraper {
 	}
 
 	
-	public static boolean findAndClickByXPath(String xpath) {
+	public boolean findAndClickByXPath(String xpath) {
 		int clicks = 0;
 		String pageBeforeClick = driver.getPageSource();
 		WebElement element = driver.findElement(By.xpath(xpath));
@@ -128,7 +129,7 @@ public class WebScraper {
 		return true;
 	}
 	
-	public static boolean findAndClickByXPath(List<String> xpaths) {
+	public boolean findAndClickByXPath(List<String> xpaths) {
 		for(String xpath : xpaths) {
 			if(!findAndClickByXPath(xpath)) {
 				System.out.println("Error with xpath: " + xpath);
@@ -138,7 +139,7 @@ public class WebScraper {
 		return true;
 	}
 	
-	public static WebDriver getDriver() {
+	public WebDriver getDriver() {
 		return driver;
 	}
 }
