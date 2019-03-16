@@ -9,7 +9,8 @@ public class Main {
 	public static void main(String[] args){
 		WebScraper scraper = new WebScraper("https://overbuff.com/heroes");
 		scraper.setupPage();
-		
+
+		Hero.setupDefaultHeroList(scraper);
 		List<Hero> heroes = Hero.getHeroList();
 		System.out.println(heroes.get(12).toString());
 		

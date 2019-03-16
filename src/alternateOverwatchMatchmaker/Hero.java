@@ -19,7 +19,9 @@ public class Hero {
 	private final Stats[] avgStats;
 	private final List<Hero> counters;
 	private static final Map<String, Integer> NAME_TO_ID = setNameToIDMap();
-	private static List<Hero> heroList = setupHeroList();
+	public static final String[] heroTypes = {"TANK", "OFFENSE", "DEFENSE", "SUPPORT"};
+	private static WebScraper webscraper;
+	private static List<Hero> heroList = null;
 	
 	public Hero(String name, String heroType, int heroId, int health, int shield, 
 			int armor, float movementSpeed) {
@@ -30,8 +32,14 @@ public class Hero {
 		this.shield = shield;
 		this.armor = armor;
 		this.movementSpeed = movementSpeed;
-		this.pickRateByRank = WebScraper.getPickRateArrayFor(heroId);
-		this.avgStats = WebScraper.getAvgStatsFor(heroId);
+		if (webscraper == null) {
+			this.pickRateByRank = null;
+			this.avgStats = null;
+		}
+		else {
+			this.pickRateByRank = webscraper.getPickRateArrayFor(heroId);
+			this.avgStats = webscraper.getAvgStatsFor(heroId);
+		}
 		this.counters = new ArrayList<Hero>();
 	}
 	
@@ -73,12 +81,13 @@ public class Hero {
 		return Collections.unmodifiableMap(retMap);
 	}
 	
-	private static List<Hero> setupHeroList() {
+	public static List<Hero> setupDefaultHeroList(WebScraper scraper) {
 		/*Values for movement speed were taken from this reddit post, they reflect the average
 		speed of each character over 100 seconds which should be a better representation of 
 		how quickly characters move over their base speeds which don't account for abilities
 		Reddit post: https://www.reddit.com/r/OverwatchUniversity/comments/8r7tz9/another_extensive_analysis_on_character_movement/
 		*/
+		Hero.webscraper = scraper;
 		List<Hero> retList = new ArrayList<Hero>();
 		retList.add(new Hero("Ana", "SUPPORT", 0, 200, 0, 0, 5.5f));
 		retList.add(new Hero("Ashe", "OFFENSE", 1, 200, 0, 0, 7.86f));
@@ -109,6 +118,7 @@ public class Hero {
 		retList.add(new Hero("Hammond", "TANK", 26, 500, 0, 100, 15.0f));
 		retList.add(new Hero("Zarya", "TANK", 27, 200, 200, 0, 6.26f));
 		retList.add(new Hero("Zenyatta", "SUPPORT", 28, 50, 150, 0, 5.5f));
+		heroList = retList;
 		return retList;
 	}
 	
